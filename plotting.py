@@ -84,6 +84,14 @@ def plot_video(
     # See https://github.com/matplotlib/matplotlib/issues/8560/
     plt.close(plt.gcf())
 
+def compute_position_center_of_mass(self):
+    """
+    Compute position center of mass of the rod at the instance.
+    """
+    mass_times_position = np.einsum("j,ij->ij", self.mass, self.positions)
+    sum_mass_times_position = np.einsum("ij->i", mass_times_position)
+
+    return sum_mass_times_position / np.sum(self.mass)
 
 def compute_projected_velocity(plot_params: dict, period):
 

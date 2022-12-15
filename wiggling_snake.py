@@ -16,24 +16,25 @@ class SnakeSimulator(BaseSystemCollection, Constraints, Forcing, Damping, CallBa
 
 
 def run_snake(
-    b_coeff_lambda, PLOT_FIGURE=False, SAVE_FIGURE=False, SAVE_VIDEO=True, SAVE_RESULTS=True
+    b_coeff, wave_length, run_time=1, n_elements=10,PLOT_FIGURE=False, SAVE_FIGURE=False, SAVE_VIDEO=False,
 ):
     # Initialize the simulation class
     snake_sim = SnakeSimulator()
 
     # Simulation parameters
     period = 1
-    final_time = 5
+    final_time = run_time
 
     # setting up test params
-    n_elem = 50
-    start = np.zeros((3,))
+    n_elem = n_elements
+    start = np.array([0.0, 0.0, 0.0])
     direction = np.array([0.0, 0.0, 1.0])
     normal = np.array([0.0, 1.0, 0.0])
     base_length = 1
-    base_radius = 0.025
+    base_radius = 0.02
+    base_area = np.pi * base_radius ** 2
     density = 1000
-    E = 1e7
+    E = 1e6
     poisson_ratio = 0.5
     shear_modulus = E / (poisson_ratio + 1.0)
 
@@ -59,11 +60,10 @@ def run_snake(
     )
 
     # Add muscle torques
-    wave_length = b_coeff_lambda[-1]
     snake_sim.add_forcing_to(shearable_rod).using(
         MuscleTorques,
         base_length=base_length,
-        b_coeff= np.array(b_coeff_lambda[:-1]),
+        b_coeff= np.array(b_coeff),
         period=period,
         wave_number=2.0 * np.pi / (wave_length),
         phase_shift=0.0,
@@ -79,9 +79,9 @@ def run_snake(
     slip_velocity_tol = 1e-8
     mu = 1.1019368
     kinetic_mu_array = np.array(
-        [mu, 1.5 * mu, 2.0 * mu]
+        [mu, 1.5*mu, 2*mu]
     )  # [forward, backward, sideways]
-    static_mu_array = np.zeros(kinetic_mu_array.shape)
+    static_mu_array = 2 * kinetic_mu_array
     snake_sim.add_forcing_to(shearable_rod).using(
         AnisotropicFrictionalPlane,
         k=1.0,
@@ -93,12 +93,8 @@ def run_snake(
         kinetic_mu_array=kinetic_mu_array,
     )
 
-    # add damping
-    # old damping model (deprecated in v0.3.0) values
-    # damping_constant = 2e-3
-    # time_step = 8e-6
-    damping_constant = 5
-    time_step = 2.5e-5
+    damping_constant = 1.9
+    time_step = 1e-4
     snake_sim.dampen(shearable_rod).using(
         AnalyticalLinearDamper,
         damping_constant=damping_constant,
@@ -158,32 +154,24 @@ def run_snake(
         plot_snake_velocity(pp_list, period, filename_plot, SAVE_FIGURE)
         plot_curvature(pp_list, shearable_rod.rest_lengths, period, SAVE_FIGURE)
 
-        if SAVE_VIDEO:
-            filename_video = "continuum_snake.mp4"
-            plot_video(
-                pp_list,
-                video_name=filename_video,
-                fps=rendering_fps,
-                xlim=(0, 4),
-                ylim=(-.3, .2),
-            )
-
-    if SAVE_RESULTS:
-        import pickle
-
-        filename = "continuum_snake.dat"
-        file = open(filename, "wb")
-        pickle.dump(pp_list, file)
-        file.close()
-
-    # Compute the average forward velocity. These will be used for optimization.
-    [_, _, avg_forward, avg_lateral] = compute_projected_velocity(pp_list, period)
-
-    return avg_forward, avg_lateral, pp_list
+    if SAVE_VIDEO:
+        filename_video = "continuum_snake.mp4"
+        plot_video(
+            pp_list,
+            video_name=filename_video,
+            fps=rendering_fps,
+            xlim=(0, 5),
+            ylim=(-1, 1),
+        )
 
 
+    distance_traveled = (pp_list["center_of_mass"][-1] - pp_list["center_of_mass"][0])[2]
+    print(distance_traveled)
+    return distance_traveled
 
-b_coeff_lambda = [0,0,0,0,0,0,1]
-run_snake(b_coeff_lambda)
+
+b_coeff = [0, 10, 10, 10, 10,0]
+wave_length = 1
+run_snake(b_coeff=b_coeff, wave_length=wave_length, SAVE_VIDEO=True, run_time=5,n_elements=20)
 
 
