@@ -243,6 +243,7 @@ def inplace_substraction(external_force_or_torque, force_or_torque):
         for k in range(blocksize):
             external_force_or_torque[i, k] -= force_or_torque[i, k]
 
+
 # def _batch_matvec(first, second):
 #     return np.einsum("ijk,jk->ik", first, second, optimize=True)
 #
