@@ -70,7 +70,7 @@ def plot_video(
     ax.set_ylim(*ylim)
     ax.set_xlabel("z [m]", fontsize=16)
     ax.set_ylabel("x [m]", fontsize=16)
-    rod_lines_2d = ax.plot(positions_over_time[0][2], positions_over_time[0][0])[0]
+    rod_lines_2d = ax.plot(positions_over_time[0][2], positions_over_time[0][0],marker='o')[0]
     # plt.axis("equal")
     with writer.saving(fig, video_name, dpi=150):
         for time in tqdm(range(1, len(plot_params["time"]))):

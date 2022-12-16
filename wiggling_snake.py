@@ -9,6 +9,7 @@ from plotting import (
     compute_projected_velocity,
     plot_curvature,
 )
+from forces import *
 
 
 class SnakeSimulator(BaseSystemCollection, Constraints, Forcing, Damping, CallBacks):
@@ -31,7 +32,7 @@ def run_snake(
     direction = np.array([0.0, 0.0, 1.0])
     normal = np.array([0.0, 1.0, 0.0])
     base_length = 1
-    base_radius = 0.02
+    base_radius = 0.025
     base_area = np.pi * base_radius ** 2
     density = 1000
     E = 1e6
@@ -60,17 +61,31 @@ def run_snake(
     )
 
     # Add muscle torques
+    # snake_sim.add_forcing_to(shearable_rod).using(
+    #     MuscleTorques,
+    #     base_length=base_length,
+    #     b_coeff= np.array(b_coeff),
+    #     period=period,
+    #     wave_number=2.0 * np.pi / (wave_length),
+    #     phase_shift=0.0,
+    #     rest_lengths=shearable_rod.rest_lengths,
+    #     ramp_up_time=period,
+    #     direction=normal,
+    #     with_spline=True,
+    # )
+
+
+    #Add wiggling
+
+
     snake_sim.add_forcing_to(shearable_rod).using(
-        MuscleTorques,
-        base_length=base_length,
-        b_coeff= np.array(b_coeff),
+        StretchAndTwitch,
+        b_coeff=b_coeff,
+        rest_length=shearable_rod.rest_lengths,
         period=period,
-        wave_number=2.0 * np.pi / (wave_length),
-        phase_shift=0.0,
-        rest_lengths=shearable_rod.rest_lengths,
-        ramp_up_time=period,
+        wave_length=wave_length,
         direction=normal,
-        with_spline=True,
+        percent_crawling=1
     )
 
     # Add friction forces

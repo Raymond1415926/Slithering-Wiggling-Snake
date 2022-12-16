@@ -3,9 +3,9 @@ import numpy as np
 from elastica.utils import _bspline
 import copy
 from matrix_operators import _batch_product_i_k_to_ik, _batch_matvec,inplace_addition,inplace_substraction
-elastica.CosseratRod
+from elastica.external_forces import NoForces
 
-class StretchAndTwitch():
+class StretchAndTwitch(NoForces):
     def __init__(self, b_coeff, rest_length,period,wave_length,direction,percent_crawling = 0):
         self.b_coeff = np.array(b_coeff)
         self.total_force = 0
@@ -30,7 +30,7 @@ class StretchAndTwitch():
         #calculate the twitching torque
         self.calc_total_force(time)
         force_mag = self.total_force * (1-self.percent_crawling)
-        torque_mag = system.base_radius * force_mag
+        torque_mag = system.radius * force_mag
         torque = _batch_product_i_k_to_ik(self.direction, torque_mag[::-1])
         inplace_addition(
             system.external_torques[..., 1:],
@@ -45,9 +45,13 @@ class StretchAndTwitch():
         #calculate the stretching force
         self.calc_total_force(time)
         force_mag = self.total_force * self.percent_crawling
+        force = np.zeros([3,system.n_elems])
         #we need to find the tangent of the snake at each nodes and multiply them with the stretch force
-        inplace_addition(system.external_forces[:,1:], 0.5 * np.multiply(system.tangents, force_mag[1:]))
-        inplace_addition(system.external_forces[:, :-1], 0.5 * np.multiply(system.tangents, force_mag[:-1]))
+        for element in range(system.n_elems):
+            force[:,element] = force_mag[element] * system.tangents[:,element]
+
+        inplace_addition(system.external_forces[:,1:], 0.5*force)
+        inplace_addition(system.external_forces[:, :-1], 0.5*force)
 
 # b_coeff = [0,23,23,23,23,0]
 # rest_length = np.array([0.1,0.1,0.1,0.1,0.1])
