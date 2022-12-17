@@ -225,7 +225,7 @@ class CMAES:
         self.stats_maxfitness = []
         self.stats_medianfitness = []
 
-def calc_fitness(*b_coeff_and_lambda):
+def calc_fitness_pure(*b_coeff_and_lambda):
     b_coeff_and_lambda = np.array(b_coeff_and_lambda)
     if (len(b_coeff_and_lambda) == 5):
         b_coeff_and_lambda = b_coeff_and_lambda.flatten()
@@ -236,16 +236,14 @@ def calc_fitness(*b_coeff_and_lambda):
 
     original_stdout = sys.stdout
     sys.stdout = open(os.devnull,"w")
-    distance_traveled = run_snake(b_coeff=b_coeff,wave_length=lambda_m,n_elements=20,run_time=1)
+    distance_traveled = run_snake_pure_wiggle(b_coeff=b_coeff,wave_length=lambda_m,n_elements=20,run_time=1)
     sys.stdout = original_stdout
 
-
-
-    boundary = 300
+    boundary = 500
     b_coeff = np.array(b_coeff)
     fitness = distance_traveled
     abs_coeff = np.abs(b_coeff)
-    penalty = 100
+    penalty = 100.0
     out_of_bound = abs_coeff > boundary
     if np.any(out_of_bound):
         for idx in np.where(abs_coeff > boundary)[0]:
@@ -254,13 +252,46 @@ def calc_fitness(*b_coeff_and_lambda):
             fitness -= abs(lambda_m) * penalty * 30
     return fitness
 
-initial_mean = np.array([22.70904072, 24.52760326, 24.74929125, 27.62244186,0.87438784])
-sigma = 0.5
-pop_size = 20
-snake_optimization = CMAES(initial_mean=initial_mean,sigma=sigma,popsize=pop_size,generations_to_run = 100, reverse=False)
-answer = snake_optimization.run(calc_fitness)
+def calc_fitness_combined(*b_coeff_and_lambda_percentage):
+    b_coeff_and_lambda_percentage = np.array(b_coeff_and_lambda_percentage)
+    if (len(b_coeff_and_lambda_percentage) == 6):
+        b_coeff_and_lambda = b_coeff_and_lambda_percentage.flatten()
+    else:
+        assert len(b_coeff_and_lambda_percentage) == 6, "wrong number of input parameters"
+    b_coeff = b_coeff_and_lambda_percentage[0:4]
+    lambda_m = b_coeff_and_lambda_percentage[4]
+    crawling_percentage = b_coeff_and_lambda_percentage[-1]
+    b_coeffs = np.zeros(6)
+    b_coeffs[1:5] = b_coeff
+
+    original_stdout = sys.stdout
+    sys.stdout = open(os.devnull,"w")
+    distance_traveled = run_snake(b_coeff=b_coeff,wave_length=lambda_m,percent_crawling=crawling_percentage, n_elements=20,run_time=1)
+    sys.stdout = original_stdout
+
+    boundary = 500
+    b_coeff = np.array(b_coeff)
+    fitness = distance_traveled
+    abs_coeff = np.abs(b_coeff)
+    penalty = 100.0
+    out_of_bound = abs_coeff > boundary
+    if np.any(out_of_bound):
+        for idx in np.where(abs_coeff > boundary)[0]:
+            fitness -= abs_coeff[idx] * penalty
+    if lambda_m < 0:
+        fitness -= abs(lambda_m) * penalty * 30
+    if crawling_percentage < 0 or crawling_percentage > 1:
+        fitness -= abs(crawling_percentage) * penalty * 50
+    return fitness
+
+initial_mean = np.array([150,150,150,150,1])
+sigma = 15
+pop_size = 30
+snake_optimization = CMAES(initial_mean=initial_mean,sigma=sigma,popsize=pop_size,generations=200, reverse=True)
+answer = snake_optimization.run(calc_fitness_pure)
 print(answer)
-plt.plot(answer.stats_fitness)
+plt.plot(snake_optimization.stats_maxfitness)
+print(snake_optimization.stopping)
 plt.ylabel("Fitness")
 plt.xlabel("Generations")
 plt.show()

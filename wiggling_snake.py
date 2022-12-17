@@ -354,7 +354,7 @@ def run_snake_pure_twitching(
     return distance_traveled
 
 def run_snake(
-    b_coeff, wave_length, run_time=1, n_elements=10,PLOT_FIGURE=False, SAVE_FIGURE=False, SAVE_VIDEO=False,\
+    b_coeff, wave_length, percent_crawling=0.5, run_time=1, n_elements=10,PLOT_FIGURE=False, SAVE_FIGURE=False, SAVE_VIDEO=False,\
         xlim = (0,5)
 ):
     # Initialize the simulation class
@@ -398,7 +398,7 @@ def run_snake(
         GravityForces, acc_gravity=np.array([0.0, gravitational_acc, 0.0])
     )
 
-    percent_crawling = 0.5
+    percent_crawling = percent_crawling
     # Add muscle torques
     # snake_sim.add_forcing_to(shearable_rod).using(
     #     MuscleTorques,
@@ -502,7 +502,7 @@ def run_snake(
     snake_sim.finalize()
 
     timestepper = PositionVerlet()
-    integrate(timestepper, snake_sim, final_time, total_steps)
+    integrate(timestepper, snake_sim, final_time, total_steps, progress_bar=False)
 
     if PLOT_FIGURE:
         filename_plot = "continuum_snake_velocity.png"
