@@ -10,6 +10,7 @@ from numpy.random import multivariate_normal
 from wiggling_snake import*
 from tqdm import tqdm
 import copy
+import sys
 
     
 class CMAES:
@@ -182,7 +183,9 @@ class CMAES:
             self.stats_medianfitness.append(problem(*(population[self.popsize // 2 - 1].tolist())))
             
             self.stconds()
-            print(self.generations)
+            print("\n *******************************************")
+            print(f"The {self.generations} generation")
+            print(self.stats_fitness[-1])
         else:
             return population[0]
         
@@ -222,17 +225,27 @@ class CMAES:
         self.stats_maxfitness = []
         self.stats_medianfitness = []
 
-def calc_fitness(self,b_coeff_and_lambda):
+def calc_fitness(*b_coeff_and_lambda):
+    b_coeff_and_lambda = np.array(b_coeff_and_lambda)
+    if (len(b_coeff_and_lambda) == 5):
+        b_coeff_and_lambda = b_coeff_and_lambda.flatten()
     b_coeff = b_coeff_and_lambda[0:4]
     lambda_m = b_coeff_and_lambda[4]
     b_coeffs = np.zeros(6)
     b_coeffs[1:5] = b_coeff
-    distance_traveled = run_snake(b_coeff=b_coeff,wave_length=lambda_m,n_elements=8,run_time=0.5)
+
+    original_stdout = sys.stdout
+    sys.stdout = open(os.devnull,"w")
+    distance_traveled = run_snake(b_coeff=b_coeff,wave_length=lambda_m,n_elements=20,run_time=1)
+    sys.stdout = original_stdout
+
+
+
     boundary = 300
     b_coeff = np.array(b_coeff)
     fitness = distance_traveled
     abs_coeff = np.abs(b_coeff)
-    penalty = 10
+    penalty = 100
     out_of_bound = abs_coeff > boundary
     if np.any(out_of_bound):
         for idx in np.where(abs_coeff > boundary)[0]:
@@ -244,7 +257,7 @@ def calc_fitness(self,b_coeff_and_lambda):
 initial_mean = np.array([22.70904072, 24.52760326, 24.74929125, 27.62244186,0.87438784])
 sigma = 0.5
 pop_size = 20
-snake_optimization = CMAES(initial_mean=initial_mean,sigma=sigma,popsize=pop_size,generations_to_run = 50)
+snake_optimization = CMAES(initial_mean=initial_mean,sigma=sigma,popsize=pop_size,generations_to_run = 100, reverse=False)
 answer = snake_optimization.run(calc_fitness)
 print(answer)
 plt.plot(answer.stats_fitness)

@@ -79,7 +79,6 @@ class CMAES:
             print(f'{idx+1} of {pop_size} in generation')
         print(pop_fitness)
         index = np.argsort(pop_fitness)
-        print(index[::-1])
         population = population[index[::-1]]
         # population.sort(key=lambda ind: problem(ind[0], ind[1]))
         # population.sort(key=problem)
@@ -143,7 +142,7 @@ class CMAES:
         # At the start, clear all stored cache and start a new campaign
         self.reset()
         
-        for i in tqdm(range(self.generations_to_run)):
+        for i in range(self.generations_to_run):
             # Sample the population here!
             population = list(multivariate_normal(self.centroid, self.sigma**2 * self.C, self.popsize))
             populations = np.array(population)
@@ -174,7 +173,7 @@ class SnakeProblem:
         lambda_m = b_coeff_and_lambda[4]
         b_coeffs = np.zeros(6)
         b_coeffs[1:5] = b_coeff
-        distance_traveled = run_snake(b_coeff=b_coeff,wave_length=lambda_m,n_elements=8,run_time=0.5)
+        distance_traveled = run_snake(b_coeff=b_coeff,wave_length=lambda_m,n_elements=20,run_time=1)
         boundary = 50
         b_coeff = np.array(b_coeff)
         fitness = distance_traveled
