@@ -77,9 +77,10 @@ def run_snake_pure_wiggle(
     # )
 
 
-    #Add wiggling
-
-
+    #add wiggling
+    """
+    add wiggling/stretching
+    """
     snake_sim.add_forcing_to(shearable_rod).using(
         StretchAndTwitch,
         b_coeff=b_coeff,
@@ -89,7 +90,6 @@ def run_snake_pure_wiggle(
         direction=normal,
         percent_crawling=1
     )
-
     # Add friction forces
     origin_plane = np.array([0.0, -base_radius, 0.0])
     normal_plane = normal
@@ -186,8 +186,9 @@ def run_snake_pure_wiggle(
     print(distance_traveled)
     return distance_traveled
 
-def run_snake_pure_torque(
-    b_coeff, wave_length, run_time=1, n_elements=10,PLOT_FIGURE=False, SAVE_FIGURE=False, SAVE_VIDEO=False,
+def run_snake_pure_twitching(
+    b_coeff, wave_length, run_time=1, n_elements=10,PLOT_FIGURE=False, SAVE_FIGURE=False, SAVE_VIDEO=False,\
+        xlim = (0,5)
 ):
     # Initialize the simulation class
     snake_sim = SnakeSimulator()
@@ -231,21 +232,32 @@ def run_snake_pure_torque(
     )
 
     #Add muscle torques
-    snake_sim.add_forcing_to(shearable_rod).using(
-        MuscleTorques,
-        base_length=base_length,
-        b_coeff= np.array(b_coeff),
-        period=period,
-        wave_number=2.0 * np.pi / (wave_length),
-        phase_shift=0.0,
-        rest_lengths=shearable_rod.rest_lengths,
-        ramp_up_time=period,
-        direction=normal,
-        with_spline=True,
-    )
-
+    # snake_sim.add_forcing_to(shearable_rod).using(
+    #     MuscleTorques,
+    #     base_length=base_length,
+    #     b_coeff= np.array(b_coeff),
+    #     period=period,
+    #     wave_number=2.0 * np.pi / (wave_length),
+    #     phase_shift=0.0,
+    #     rest_lengths=shearable_rod.rest_lengths,
+    #     ramp_up_time=period,
+    #     direction=normal,
+    #     with_spline=True,
+    # )
 
     # Add friction forces
+    """
+    add twitching
+    """
+    snake_sim.add_forcing_to(shearable_rod).using(
+        StretchAndTwitch,
+        b_coeff=b_coeff,
+        rest_length=shearable_rod.rest_lengths,
+        period=period,
+        wave_length=wave_length,
+        direction=normal,
+        percent_crawling=0
+    )
     origin_plane = np.array([0.0, -base_radius, 0.0])
     normal_plane = normal
     slip_velocity_tol = 1e-8
@@ -332,7 +344,7 @@ def run_snake_pure_torque(
             pp_list,
             video_name=filename_video,
             fps=rendering_fps,
-            xlim=(0, 10),
+            xlim=xlim,
             ylim=(-1, 1),
         )
 
@@ -400,11 +412,11 @@ def run_snake(
     #     direction=normal,
     #     with_spline=True,
     # )
-
-
     #Add wiggling
 
-
+    """
+    Add both stretching and twitching
+    """
     snake_sim.add_forcing_to(shearable_rod).using(
         StretchAndTwitch,
         b_coeff=b_coeff,

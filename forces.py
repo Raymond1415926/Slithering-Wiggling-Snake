@@ -95,15 +95,15 @@ def calc_twist(
         time,
         wave_number,
         percent_crawling,
-        radius,
         direction,
+        radius,
         external_torques,
         director_collection
         ):
     # calculate total force
     total_force = spline * np.sin(-angular_frequency * time + wave_number * s)
     force_mag = total_force * (1-percent_crawling)
-    torque_mag = radius * force_mag
+    torque_mag = 2 * radius * force_mag
     torque = _batch_product_i_k_to_ik(direction, torque_mag[::-1])
     inplace_addition(
         external_torques[..., 1:],
