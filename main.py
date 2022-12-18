@@ -5,11 +5,11 @@ n_elements = 50
 #pure wiggling 95 generations
 #{'MaxIter': False, 'EqualFunVals': False, 'ConditionCov': False, 'NoEffectCoor': True, 'Stagnation': False, 'TolXUp': False}
 #[-150.19929554, 499.68705001, 499.708699,  489.26091413, 285.00816832]
-b_coeff = [ 0, -150.19929554, 499.68705001, 499.708699,  489.26091413, 0 ] #in N
-wave_length = 285.0082#in cm
-percent_crawling = 100
-percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
-wave_length /= 100 #obtain wave_length in meters
+# b_coeff = [ 0, -150.19929554, 499.68705001, 499.708699,  489.26091413, 0 ] #in N
+# wave_length = 285.0082#in cm
+# percent_crawling = 100
+# percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
+# wave_length /= 100 #obtain wave_length in meters
 
 #50% case
 #[-47.09704241,490.06000744,499.88922264,499.98137414,82.77147074,50]
@@ -19,12 +19,14 @@ wave_length /= 100 #obtain wave_length in meters
 # percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
 # wave_length /= 100 #obtain wave_length in meters
 
-#pure twitching
-# b_coeff = [0,-8.10107625,325.16388691,499.58505016,301.97029055,0] #in N
-# wave_length = 149.56854175 #in cm
-# percent_crawling = 0
-# percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
-# wave_length /= 100 #obtain wave_length in meters
+# pure twitching
+b_coeff_and_lambda = [219.25880586, 265.95335158, 270.85175921, 344.27440363,  139.08981327]
+b_coeff = [0,0,0,0,0,0] #in N
+b_coeff[1:5] = b_coeff_and_lambda[0:4]
+wave_length = b_coeff_and_lambda[-1] #in cm
+percent_crawling = 0
+percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
+wave_length /= 100 #obtain wave_length in meters
 
 #combined case
 # b_coeff_and_lambda_percentage = [-66.08819673,367.36506461,493.36972054,488.02881696,78.20414871,24.81136202]
@@ -34,39 +36,6 @@ wave_length /= 100 #obtain wave_length in meters
 # percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
 # wave_length /= 100 #obtain wave_length in meters
 
-# b_coeff_and_lambda_percentage = [496.07627175, 499.68782902, 499.87980135, 474.23855433, 255.0977935, 100]
-# def calc_fitness_combined(*b_coeff_and_lambda_percentage):
-#     b_coeff_and_lambda_percentage = np.array(b_coeff_and_lambda_percentage)
-#     if (len(b_coeff_and_lambda_percentage) == 6):
-#         b_coeff_and_lambda = b_coeff_and_lambda_percentage.flatten()
-#     else:
-#         assert False, "wrong number of input parameters"
-#     b_coeff = b_coeff_and_lambda_percentage[0:4]
-#     lambda_m = b_coeff_and_lambda_percentage[4] / 100
-#     crawling_percentage = b_coeff_and_lambda_percentage[-1] / 100
-#     b_coeffs = np.zeros(6)
-#     b_coeffs[1:5] = b_coeff
-#     print(b_coeffs)
-#     print(lambda_m)
-#     print(crawling_percentage)
-#     distance_traveled = run_snake(b_coeff=b_coeffs,wave_length=lambda_m,percent_crawling=crawling_percentage,\
-#                                   SAVE_VIDEO=True, xlim=(-3,3), n_elements=20,run_time=1)
-#
-#     boundary = 500
-#     b_coeff = np.array(b_coeff)
-#     fitness = distance_traveled
-#     abs_coeff = np.abs(b_coeff)
-#     penalty = 100.0
-#     out_of_bound = abs_coeff > boundary
-#     if np.any(out_of_bound):
-#         for idx in np.where(abs_coeff > boundary)[0]:
-#             fitness -= abs_coeff[idx] * penalty
-#     if lambda_m < 0:
-#         fitness -= abs(lambda_m) * penalty * 30
-#     if crawling_percentage < 0 or crawling_percentage > 1:
-#         fitness -= abs(crawling_percentage) * penalty * 100
-#     return fitness
-# print(calc_fitness_combined(*b_coeff_and_lambda_percentage))
-
 distance_traveled = run_snake(b_coeff=b_coeff,wave_length=wave_length,percent_crawling=percent_crawling,\
-                                  SAVE_VIDEO=True, xlim=(0,5), n_elements=50,run_time=5)
+                                  SAVE_VIDEO=True, xlim=(0,5), n_elements=20,run_time=1)
+
