@@ -103,49 +103,49 @@ class CMAES:
         
 
         
-        sorted_fitness, self.population = parallel_sort(population, problem, reverse=self.reverse, sort_problem=True, cores="physical")
+        sorted_fitness, population = parallel_sort(population, problem, reverse=self.reverse, sort_problem=True, cores="physical")
         self.stats_maxfitness.append(sorted_fitness[0])
         self.stats_medianfitness.append(sorted_fitness[self.popsize // 2 - 1])
 
         # population.sort(key=lambda ind: problem(*ind), reverse=self.reverse)
         # population.sort(key=lambda ind: problem(ind[0], ind[1]))
         # population.sort(key=problem)
-        
-        
-        
-        
+
+
+
+
         # -- store sorted offspring
         self.stats_offspring.append(copy.deepcopy(population))
-        
+
         old_centroid = self.centroid
         # Note : the following does m <- <x>_w
         # Note : this is equivalent to doing m <- m + sigma * <z>_w
         # as x = m + sigma * z provided the weights sum to 1.0 which it
         # does
         self.centroid = np.dot(self.weights, population[0:self.mu])
-        
+
         # -- store new centroid
         self.stats_new_centroids.append(copy.deepcopy(self.centroid))
-        
+
         c_diff = self.centroid - old_centroid
-        
+
         # Cumulation : update evolution path
         # Equivalent to in-class definition
         self.ps = (1 - self.cs) * self.ps \
              + np.sqrt(self.cs * (2 - self.cs) * self.mueff) / self.sigma \
              * np.dot(self.B, (1. / self.diagD) * np.dot(self.B.T, c_diff))
-        
+
         # -- store new evol path
         self.stats_ps.append(copy.deepcopy(self.ps))
-        
-        hsig = float((np.linalg.norm(self.ps) / 
+
+        hsig = float((np.linalg.norm(self.ps) /
                 np.sqrt(1. - (1. - self.cs)**(2. * (self.generations + 1.))) / self.chiN
                 < (1.4 + 2. / (self.dim + 1.))))
-        
+
         self.pc = (1 - self.cc) * self.pc + hsig \
                   * np.sqrt(self.cc * (2 - self.cc) * self.mueff) / self.sigma \
                   * c_diff
-        
+
         # Update covariance matrix
         artmp = population[0:self.mu] - old_centroid
         self.C = (1 - self.ccov1 - self.ccovmu + (1 - hsig) \
@@ -153,39 +153,39 @@ class CMAES:
                 + self.ccov1 * np.outer(self.pc, self.pc) \
                 + self.ccovmu * np.dot((self.weights * artmp.T), artmp) \
                 / self.sigma**2
-        
+
         # -- store new covs
         self.stats_new_covs.append(copy.deepcopy(self.C))
-        
+
         self.sigma *= np.exp((np.linalg.norm(self.ps) / self.chiN - 1.) \
                                 * self.cs / self.ds)
-        
+
         self.diagD, self.B = np.linalg.eigh(self.C)
         indx = np.argsort(self.diagD)
-        
+
         self.cond = self.diagD[indx[-1]]/self.diagD[indx[0]]
-        
+
         self.diagD = self.diagD[indx]**0.5
         self.B = self.B[:, indx]
         self.BD = self.B * self.diagD
-        
+
     def run(self, problem):
         # At the start, clear all stored cache and start a new campaign
         self.reset()
         while any(self.stopping.values()) == False:
             # Sample the population here!
             population = list(multivariate_normal(self.centroid, self.sigma**2 * self.C, self.popsize))
-            
 
-            # Pass the population to update, which computes all new parameters 
+
+            # Pass the population to update, which computes all new parameters
             self.update(problem, population)
             # print(np.array(population).shape)
             self.generations += 1
-            
-            self.stats_fitness.append(self.population[0])
+
+            self.stats_fitness.append(population[0])
             # self.stats_maxfitness.append(problem((population[0].tolist())))
             # self.stats_medianfitness.append(problem((population[self.popsize // 2 - 1].tolist())))
-            
+
             self.stconds()
             print("\n *******************************************")
             print(f"The {self.generations} generation")
@@ -194,8 +194,8 @@ class CMAES:
             print(self.stats_medianfitness[-1],"median fitness")
         else:
             return population[0]
-        
-    
+
+
     def stconds(self):
         if (self.generations > self.numgens):
             self.stopping["MaxIter"] = True
@@ -217,7 +217,7 @@ class CMAES:
                 self.stopping["Stagnation"] = (np.median(minbest[:l]) < np.median(minbest[-l:]) and np.median(minmedian[:l]) < np.median(minmedian[-l:]))
         if (self.sigma * np.max(self.diagD) > self.stopTolXUP):
             self.stopping["TolXUp"] = True
-            
+
     def reset(self):
         # Clears everything to rerun the problem
         self.stats_centroids = []
@@ -292,7 +292,7 @@ def calc_fitness_pure_twitching(b_coeff_and_lambda):
 def calc_fitness_combined(b_coeff_and_lambda_percentage):
     b_coeff_and_lambda_percentage = np.array(b_coeff_and_lambda_percentage)
     if (len(b_coeff_and_lambda_percentage) == 6):
-        b_coeff_and_lambda_percentage = b_coeff_and_lambda_percentage.flatten()
+        b_coeff_and_lambda = b_coeff_and_lambda_percentage.flatten()
     else:
         assert False, "Wrong number of input parameters"
     b_coeff = b_coeff_and_lambda_percentage[0:4]
@@ -329,10 +329,10 @@ Sixth: percentage of crawling in % so DIVIDE by 100 to get the correct percentag
 """
 def run():
     sigma = 30
-    pop_size = 40 #at least 30
-    initial_mean = np.array([250,250,250,250,100])
-    snake_optimization = CMAES(initial_mean=initial_mean, sigma=sigma, popsize=pop_size, generations=300, reverse=True)
-    answer = snake_optimization.run(calc_fitness_pure_wiggle)
+    pop_size = 50
+    initial_mean = np.array([250, 250, 250, 250, 0])
+    snake_optimization = CMAES(initial_mean=initial_mean, sigma=sigma, popsize=pop_size, generations=250, reverse=True)
+    answer = snake_optimization.run(calc_fitness_pure_twitching)
     print(answer)
     plt.plot(snake_optimization.stats_maxfitness)
     print(snake_optimization.stopping)
