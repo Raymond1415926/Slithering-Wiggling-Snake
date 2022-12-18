@@ -260,7 +260,7 @@ def calc_fitness_pure_wiggle(b_coeff_and_lambda):
             fitness -= abs(lambda_m) * penalty * 30
     return fitness
 
-def calc_fitness_pure_wiggle(b_coeff_and_lambda):
+def calc_fitness_pure_twitching(b_coeff_and_lambda):
     b_coeff_and_lambda = np.array(b_coeff_and_lambda)
     if (len(b_coeff_and_lambda) == 5):
         b_coeff_and_lambda = b_coeff_and_lambda.flatten()
