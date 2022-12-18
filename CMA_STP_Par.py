@@ -244,7 +244,7 @@ def calc_fitness_pure_wiggle(b_coeff_and_lambda):
 
     original_stdout = sys.stdout
     sys.stdout = open(os.devnull,"w")
-    distance_traveled = run_snake_pure_wiggle(b_coeff=b_coeffs,wave_length=lambda_m,n_elements=20,run_time=2)
+    distance_traveled = run_snake(percent_crawling=1,b_coeff=b_coeffs,wave_length=lambda_m,n_elements=20,run_time=1)
     sys.stdout = original_stdout
 
     boundary = 500
@@ -260,7 +260,7 @@ def calc_fitness_pure_wiggle(b_coeff_and_lambda):
             fitness -= abs(lambda_m) * penalty * 30
     return fitness
 
-def calc_fitness_pure_twitching(b_coeff_and_lambda):
+def calc_fitness_pure_wiggle(b_coeff_and_lambda):
     b_coeff_and_lambda = np.array(b_coeff_and_lambda)
     if (len(b_coeff_and_lambda) == 5):
         b_coeff_and_lambda = b_coeff_and_lambda.flatten()
@@ -273,7 +273,7 @@ def calc_fitness_pure_twitching(b_coeff_and_lambda):
 
     original_stdout = sys.stdout
     sys.stdout = open(os.devnull,"w")
-    distance_traveled = run_snake_pure_twitching(b_coeff=b_coeffs,wave_length=lambda_m,n_elements=20,run_time=2)
+    distance_traveled = run_snake(percent_crawling=0,b_coeff=b_coeffs,wave_length=lambda_m,n_elements=20,run_time=1)
     sys.stdout = original_stdout
 
     boundary = 500
@@ -303,7 +303,7 @@ def calc_fitness_combined(b_coeff_and_lambda_percentage):
 
     original_stdout = sys.stdout
     sys.stdout = open(os.devnull,"w")
-    distance_traveled = run_snake(b_coeff=b_coeffs,wave_length=lambda_m,percent_crawling=crawling_percentage, n_elements=20,run_time=2)
+    distance_traveled = run_snake(b_coeff=b_coeffs,wave_length=lambda_m,percent_crawling=crawling_percentage, n_elements=20,run_time=1)
     sys.stdout = original_stdout
 
     boundary = 500
