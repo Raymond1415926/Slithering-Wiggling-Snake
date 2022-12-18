@@ -2,10 +2,11 @@ from wiggling_snake import*
 
 n_elements = 50
 
-#pure wiggling
-#[496.07627175, 499.68782902, 499.87980135, 474.23855433, 255.0977935 ]
-b_coeff = [ 0,496.07627175, 499.68782902, 499.87980135, 474.23855433,0 ] #in N
-wave_length = 255.0977935#in cm
+#pure wiggling 95 generations
+#{'MaxIter': False, 'EqualFunVals': False, 'ConditionCov': False, 'NoEffectCoor': True, 'Stagnation': False, 'TolXUp': False}
+#[-150.19929554, 499.68705001, 499.708699,  489.26091413, 285.00816832]
+b_coeff = [ 0, -150.19929554, 499.68705001, 499.708699,  489.26091413, 0 ] #in N
+wave_length = 285.0082#in cm
 percent_crawling = 100
 percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
 wave_length /= 100 #obtain wave_length in meters
@@ -68,4 +69,4 @@ wave_length /= 100 #obtain wave_length in meters
 # print(calc_fitness_combined(*b_coeff_and_lambda_percentage))
 
 distance_traveled = run_snake(b_coeff=b_coeff,wave_length=wave_length,percent_crawling=percent_crawling,\
-                                  SAVE_VIDEO=True, xlim=(-3,3), n_elements=50,run_time=5)
+                                  SAVE_VIDEO=True, xlim=(0,5), n_elements=50,run_time=5)

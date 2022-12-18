@@ -3,9 +3,13 @@ population_size = 30
 max_generation = 200
 
 
-Pure wiggling case: 118 generations
-b_coeff = [ 0,499.26038287,499.72485096,499.90456082,499.88150906,0 ] #in N
-wave_length = 1011287.2865 #in cm
+#pure wiggling 92 generations
+#[496.07627175, 499.68782902, 499.87980135, 474.23855433, 255.0977935 ]
+b_coeff = [ 0,496.07627175, 499.68782902, 499.87980135, 474.23855433,0 ] #in N
+wave_length = 255.0977935#in cm
+percent_crawling = 100
+percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
+wave_length /= 100 #obtain wave_length in meters
 
 Pure twitching case: 114 generations
 b_coeff = [0,-8.10107625,325.16388691,499.58505016,301.97029055,0] #in N

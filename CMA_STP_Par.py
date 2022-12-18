@@ -103,7 +103,10 @@ class CMAES:
         
 
         
-        population = parallel_sort(population, problem, reverse=self.reverse)
+        sorted_fitness, population = parallel_sort(population, problem, reverse=self.reverse, sort_problem=True, cores="physical")
+        self.stats_maxfitness.append(sorted_fitness[0])
+        self.stats_medianfitness.append(sorted_fitness[self.popsize // 2 - 1])
+
         # population.sort(key=lambda ind: problem(*ind), reverse=self.reverse)
         # population.sort(key=lambda ind: problem(ind[0], ind[1]))
         # population.sort(key=problem)
@@ -180,8 +183,8 @@ class CMAES:
             self.generations += 1
             
             self.stats_fitness.append(population[0])
-            self.stats_maxfitness.append(problem(*(population[0].tolist())))
-            self.stats_medianfitness.append(problem(*(population[self.popsize // 2 - 1].tolist())))
+            # self.stats_maxfitness.append(problem((population[0].tolist())))
+            # self.stats_medianfitness.append(problem((population[self.popsize // 2 - 1].tolist())))
             
             self.stconds()
             print("\n *******************************************")
@@ -228,12 +231,12 @@ class CMAES:
         self.stats_maxfitness = []
         self.stats_medianfitness = []
 
-def calc_fitness_pure_wiggle(*b_coeff_and_lambda):
+def calc_fitness_pure_wiggle(b_coeff_and_lambda):
     b_coeff_and_lambda = np.array(b_coeff_and_lambda)
     if (len(b_coeff_and_lambda) == 5):
         b_coeff_and_lambda = b_coeff_and_lambda.flatten()
     else:
-        assert False, "wrong number of input"
+        assert False, "Wrong number of input"
     b_coeff = b_coeff_and_lambda[0:4]
     lambda_m = b_coeff_and_lambda[4] / 100
     b_coeffs = np.zeros(6)
@@ -257,12 +260,12 @@ def calc_fitness_pure_wiggle(*b_coeff_and_lambda):
             fitness -= abs(lambda_m) * penalty * 30
     return fitness
 
-def calc_fitness_pure_twitching(*b_coeff_and_lambda):
+def calc_fitness_pure_twitching(b_coeff_and_lambda):
     b_coeff_and_lambda = np.array(b_coeff_and_lambda)
     if (len(b_coeff_and_lambda) == 5):
         b_coeff_and_lambda = b_coeff_and_lambda.flatten()
     else:
-        assert False, "wrong number of input"
+        assert False, "Wrong number of input"
     b_coeff = b_coeff_and_lambda[0:4]
     lambda_m = b_coeff_and_lambda[4] / 100
     b_coeffs = np.zeros(6)
@@ -286,12 +289,12 @@ def calc_fitness_pure_twitching(*b_coeff_and_lambda):
             fitness -= abs(lambda_m) * penalty * 30
     return fitness
 
-def calc_fitness_combined(*b_coeff_and_lambda_percentage):
+def calc_fitness_combined(b_coeff_and_lambda_percentage):
     b_coeff_and_lambda_percentage = np.array(b_coeff_and_lambda_percentage)
     if (len(b_coeff_and_lambda_percentage) == 6):
         b_coeff_and_lambda = b_coeff_and_lambda_percentage.flatten()
     else:
-        assert False, "wrong number of input parameters"
+        assert False, "Wrong number of input parameters"
     b_coeff = b_coeff_and_lambda_percentage[0:4]
     lambda_m = b_coeff_and_lambda_percentage[4] / 100
     crawling_percentage = b_coeff_and_lambda_percentage[-1] / 100
@@ -324,14 +327,19 @@ First four term: the middle 4 for the 6 b_spline coefficients in Newtons
 Fifth: wave length in centimeters, so DIVIDE by 100 to get the correct length in meters.
 Sixth: percentage of crawling in % so DIVIDE by 100 to get the correct percentage in digital form.
 """
-sigma = 30
-pop_size = 20
-initial_mean = np.array([250,250,250,250,0])
-snake_optimization = CMAES(initial_mean=initial_mean,sigma=sigma,popsize=pop_size,generations=250, reverse=True)
-answer = snake_optimization.run(calc_fitness_pure_wiggle)
-print(answer)
-plt.plot(snake_optimization.stats_maxfitness)
-print(snake_optimization.stopping)
-plt.ylabel("Fitness")
-plt.xlabel("Generations")
-plt.show()
+def run():
+    sigma = 30
+    pop_size = 50
+    initial_mean = np.array([250, 250, 250, 250, 0])
+    snake_optimization = CMAES(initial_mean=initial_mean, sigma=sigma, popsize=pop_size, generations=250, reverse=True)
+    answer = snake_optimization.run(calc_fitness_pure_wiggle)
+    print(answer)
+    plt.plot(snake_optimization.stats_maxfitness)
+    print(snake_optimization.stopping)
+    plt.ylabel("Fitness")
+    plt.xlabel("Generations")
+    plt.show()
+
+
+if __name__ == '__main__':
+    run()

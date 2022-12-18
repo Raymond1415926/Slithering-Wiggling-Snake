@@ -63,21 +63,6 @@ def run_snake_pure_wiggle(
         GravityForces, acc_gravity=np.array([0.0, gravitational_acc, 0.0])
     )
 
-    # Add muscle torques
-    # snake_sim.add_forcing_to(shearable_rod).using(
-    #     MuscleTorques,
-    #     base_length=base_length,
-    #     b_coeff= np.array(b_coeff),
-    #     period=period,
-    #     wave_number=2.0 * np.pi / (wave_length),
-    #     phase_shift=0.0,
-    #     rest_lengths=shearable_rod.rest_lengths,
-    #     ramp_up_time=period,
-    #     direction=normal,
-    #     with_spline=True,
-    # )
-
-
     #add wiggling
     """
     add wiggling/stretching
@@ -232,21 +217,7 @@ def run_snake_pure_twitching(
         GravityForces, acc_gravity=np.array([0.0, gravitational_acc, 0.0])
     )
 
-    #Add muscle torques
-    # snake_sim.add_forcing_to(shearable_rod).using(
-    #     MuscleTorques,
-    #     base_length=base_length,
-    #     b_coeff= np.array(b_coeff),
-    #     period=period,
-    #     wave_number=2.0 * np.pi / (wave_length),
-    #     phase_shift=0.0,
-    #     rest_lengths=shearable_rod.rest_lengths,
-    #     ramp_up_time=period,
-    #     direction=normal,
-    #     with_spline=True,
-    # )
 
-    # Add friction forces
     """
     add twitching
     """
@@ -259,6 +230,7 @@ def run_snake_pure_twitching(
         direction=normal,
         percent_crawling=0
     )
+    # Add friction forces
     origin_plane = np.array([0.0, -base_radius, 0.0])
     normal_plane = normal
     slip_velocity_tol = 1e-8
@@ -400,20 +372,6 @@ def run_snake(
     )
 
     percent_crawling = percent_crawling
-    # Add muscle torques
-    # snake_sim.add_forcing_to(shearable_rod).using(
-    #     MuscleTorques,
-    #     base_length=base_length,
-    #     b_coeff= np.array(b_coeff) * percent_crawling,
-    #     period=period,
-    #     wave_number=2.0 * np.pi / (wave_length),
-    #     phase_shift=0.0,
-    #     rest_lengths=shearable_rod.rest_lengths,
-    #     ramp_up_time=period,
-    #     direction=normal,
-    #     with_spline=True,
-    # )
-    #Add wiggling
 
     """
     Add both stretching and twitching

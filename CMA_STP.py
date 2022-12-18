@@ -328,7 +328,7 @@ sigma = 30
 pop_size = 20
 initial_mean = np.array([250,250,250,250,0])
 snake_optimization = CMAES(initial_mean=initial_mean,sigma=sigma,popsize=pop_size,generations=250, reverse=True)
-answer = snake_optimization.run(calc_fitness_pure_wiggle)
+answer = snake_optimization.run(calc_fitness_pure_twitching)
 print(answer)
 plt.plot(snake_optimization.stats_maxfitness)
 print(snake_optimization.stopping)

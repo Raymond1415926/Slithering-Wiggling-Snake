@@ -28,7 +28,7 @@ def parallel_sort(population, problem, reverse=False, cores="physical", sort_pro
         results = pool.map(problem, population)
 
         # Sort the population list directly based on the corresponding element in the results list
-        sorted_population = sorted(population, key=lambda x: results[population.index(x)], reverse=reverse)
+        sorted_population = sorted(zip(population, results), key=lambda x: x[1], reverse=reverse)
 
         # Close the pool and wait for all worker processes to terminate
         pool.close()
@@ -36,7 +36,7 @@ def parallel_sort(population, problem, reverse=False, cores="physical", sort_pro
 
     if sort_problem:
         # Extract the corresponding element in the results list for each element in the sorted population list
-        sorted_output = [results[population.index(x)] for x in sorted_population]
-        return sorted_output, sorted_population
+        sorted_output = [i[1] for i in sorted_population]
+        return sorted_output, [i[0] for i in sorted_population]
     else:
-        return sorted_population
+        return [i[0] for i in sorted_population]
