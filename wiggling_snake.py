@@ -167,8 +167,10 @@ def run_snake_pure_wiggle(
             ylim=(-1, 1),
         )
 
-
-    distance_traveled = (pp_list["center_of_mass"][-1] - pp_list["center_of_mass"][0])[2]
+    distance_traveled = ((pp_list["center_of_mass"][-1] - pp_list["center_of_mass"][0])[2] ** 2 \
+                         + (pp_list["center_of_mass"][-1] - pp_list["center_of_mass"][0])[0] ** 2) ** 0.5
+    if isnan(distance_traveled):
+        distance_traveled = -99999999
     print(distance_traveled)
     return distance_traveled
 
@@ -321,8 +323,10 @@ def run_snake_pure_twitching(
             ylim=(-1, 1),
         )
 
-
-    distance_traveled = (pp_list["center_of_mass"][-1] - pp_list["center_of_mass"][0])[2]
+    distance_traveled = ((pp_list["center_of_mass"][-1] - pp_list["center_of_mass"][0])[2] ** 2 \
+                         + (pp_list["center_of_mass"][-1] - pp_list["center_of_mass"][0])[0] ** 2) ** 0.5
+    if isnan(distance_traveled):
+        distance_traveled = -99999999
     print(distance_traveled)
     return distance_traveled
 
