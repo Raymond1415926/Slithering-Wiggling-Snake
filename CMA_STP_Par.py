@@ -104,6 +104,7 @@ class CMAES:
 
         
         sorted_fitness, population = parallel_sort(population, problem, reverse=self.reverse, sort_problem=True, cores="physical")
+        self.population = population.copy()
         self.stats_maxfitness.append(sorted_fitness[0])
         self.stats_medianfitness.append(sorted_fitness[self.popsize // 2 - 1])
 
@@ -182,7 +183,7 @@ class CMAES:
             # print(np.array(population).shape)
             self.generations += 1
 
-            self.stats_fitness.append(population[0])
+            self.stats_fitness.append(self.population[0])
             # self.stats_maxfitness.append(problem((population[0].tolist())))
             # self.stats_medianfitness.append(problem((population[self.popsize // 2 - 1].tolist())))
 
@@ -193,7 +194,7 @@ class CMAES:
             print(self.stats_maxfitness[-1],"fitness")
             print(self.stats_medianfitness[-1],"median fitness")
         else:
-            return population[0]
+            return self.population[0]
 
 
     def stconds(self):
@@ -328,11 +329,11 @@ Fifth: wave length in centimeters, so DIVIDE by 100 to get the correct length in
 Sixth: percentage of crawling in % so DIVIDE by 100 to get the correct percentage in digital form.
 """
 def run():
-    sigma = 30
-    pop_size = 50
-    initial_mean = np.array([250, 250, 250, 250, 0])
+    sigma = 40
+    pop_size = 80
+    initial_mean = np.array([250, 250, 250, 250, 0, 50])
     snake_optimization = CMAES(initial_mean=initial_mean, sigma=sigma, popsize=pop_size, generations=250, reverse=True)
-    answer = snake_optimization.run(calc_fitness_pure_twitching)
+    answer = snake_optimization.run(calc_fitness_combined)
     print(answer)
     plt.plot(snake_optimization.stats_maxfitness)
     print(snake_optimization.stopping)
