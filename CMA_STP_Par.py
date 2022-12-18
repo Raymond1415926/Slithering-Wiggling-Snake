@@ -329,7 +329,7 @@ Fifth: wave length in centimeters, so DIVIDE by 100 to get the correct length in
 Sixth: percentage of crawling in % so DIVIDE by 100 to get the correct percentage in digital form.
 """
 def run():
-    sigma = 40
+    sigma = 30
     pop_size = 80
     initial_mean = np.array([250, 250, 250, 250, 0, 50])
     snake_optimization = CMAES(initial_mean=initial_mean, sigma=sigma, popsize=pop_size, generations=250, reverse=True)
