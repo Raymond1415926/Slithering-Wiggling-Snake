@@ -1,7 +1,17 @@
-Pure wiggling case:
-b_coeff = [0,250.12414704,249.89491901,250.68124652,250.02002427,0]
-wave_length = 0.65816607
+sigma = 30
+population_size = 30
+max_generation = 200
 
-50 % wiggling case:
-b_coeff = [ 0,499.26038287,499.72485096,499.90456082,499.88150906,0 ]
-wave_length = 1011.2872865
+
+Pure wiggling case: 118 generations
+b_coeff = [ 0,499.26038287,499.72485096,499.90456082,499.88150906,0 ] #in N
+wave_length = 1011287.2865 #in cm
+
+Pure twitching case: 114 generations
+b_coeff = [0,-8.10107625,325.16388691,499.58505016,301.97029055,0] #in N
+wave_length = 149.56854175 #in cm
+
+50% case: 98 generations
+b_coeff = [0,-47.09704241,490.06000744,499.88922264,499.98137414,0] #in N
+wave_length = 82.77147074 #in cm
+percent_crawling = 50 #in %

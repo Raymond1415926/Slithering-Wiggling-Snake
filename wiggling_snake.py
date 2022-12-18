@@ -10,6 +10,7 @@ from plotting import (
     plot_curvature,
 )
 from forces import*
+from math import isnan
 
 
 
@@ -424,7 +425,7 @@ def run_snake(
         period=period,
         wave_length=wave_length,
         direction=normal,
-        percent_crawling=0.5
+        percent_crawling=percent_crawling
     )
 
     # Add friction forces
@@ -516,11 +517,14 @@ def run_snake(
             video_name=filename_video,
             fps=rendering_fps,
             xlim=xlim,
-            ylim=(-1, 1),
+            ylim=(-3, 3),
         )
 
 
-    distance_traveled = ((pp_list["center_of_mass"][-1] - pp_list["center_of_mass"][0])[2]**2 + (pp_list["center_of_mass"][-1] - pp_list["center_of_mass"][0])[0]**2 + (pp_list["center_of_mass"][-1] - pp_list["center_of_mass"][0])[1]**2)**0.5
+    distance_traveled = ((pp_list["center_of_mass"][-1] - pp_list["center_of_mass"][0])[2]**2 \
+                         + (pp_list["center_of_mass"][-1] - pp_list["center_of_mass"][0])[0]**2)**0.5
+    if isnan(distance_traveled):
+        distance_traveled = -99999999
     print(distance_traveled)
     return distance_traveled
 
