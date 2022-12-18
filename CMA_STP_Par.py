@@ -103,7 +103,7 @@ class CMAES:
         
 
         
-        sorted_fitness, population = parallel_sort(population, problem, reverse=self.reverse, sort_problem=True, cores="physical")
+        sorted_fitness, self.population = parallel_sort(population, problem, reverse=self.reverse, sort_problem=True, cores="physical")
         self.stats_maxfitness.append(sorted_fitness[0])
         self.stats_medianfitness.append(sorted_fitness[self.popsize // 2 - 1])
 
@@ -182,7 +182,7 @@ class CMAES:
             # print(np.array(population).shape)
             self.generations += 1
             
-            self.stats_fitness.append(population[0])
+            self.stats_fitness.append(self.population[0])
             # self.stats_maxfitness.append(problem((population[0].tolist())))
             # self.stats_medianfitness.append(problem((population[self.popsize // 2 - 1].tolist())))
             
@@ -244,7 +244,7 @@ def calc_fitness_pure_wiggle(b_coeff_and_lambda):
 
     original_stdout = sys.stdout
     sys.stdout = open(os.devnull,"w")
-    distance_traveled = run_snake_pure_wiggle(b_coeff=b_coeffs,wave_length=lambda_m,n_elements=20,run_time=2)
+    distance_traveled = run_snake_pure_wiggle(b_coeff=b_coeffs,wave_length=lambda_m,n_elements=20,run_time=1)
     sys.stdout = original_stdout
 
     boundary = 500
@@ -273,7 +273,7 @@ def calc_fitness_pure_twitching(b_coeff_and_lambda):
 
     original_stdout = sys.stdout
     sys.stdout = open(os.devnull,"w")
-    distance_traveled = run_snake_pure_twitching(b_coeff=b_coeffs,wave_length=lambda_m,n_elements=20,run_time=2)
+    distance_traveled = run_snake_pure_twitching(b_coeff=b_coeffs,wave_length=lambda_m,n_elements=20,run_time=1)
     sys.stdout = original_stdout
 
     boundary = 500
@@ -292,7 +292,7 @@ def calc_fitness_pure_twitching(b_coeff_and_lambda):
 def calc_fitness_combined(b_coeff_and_lambda_percentage):
     b_coeff_and_lambda_percentage = np.array(b_coeff_and_lambda_percentage)
     if (len(b_coeff_and_lambda_percentage) == 6):
-        b_coeff_and_lambda = b_coeff_and_lambda_percentage.flatten()
+        b_coeff_and_lambda_percentage = b_coeff_and_lambda_percentage.flatten()
     else:
         assert False, "Wrong number of input parameters"
     b_coeff = b_coeff_and_lambda_percentage[0:4]
@@ -303,7 +303,7 @@ def calc_fitness_combined(b_coeff_and_lambda_percentage):
 
     original_stdout = sys.stdout
     sys.stdout = open(os.devnull,"w")
-    distance_traveled = run_snake(b_coeff=b_coeffs,wave_length=lambda_m,percent_crawling=crawling_percentage, n_elements=20,run_time=2)
+    distance_traveled = run_snake(b_coeff=b_coeffs,wave_length=lambda_m,percent_crawling=crawling_percentage, n_elements=20,run_time=1)
     sys.stdout = original_stdout
 
     boundary = 500
@@ -329,8 +329,8 @@ Sixth: percentage of crawling in % so DIVIDE by 100 to get the correct percentag
 """
 def run():
     sigma = 30
-    pop_size = 50
-    initial_mean = np.array([250, 250, 250, 250, 0])
+    pop_size = 1000 #at least 30
+    initial_mean = np.array([250, 250, 250, 250, 50])
     snake_optimization = CMAES(initial_mean=initial_mean, sigma=sigma, popsize=pop_size, generations=250, reverse=True)
     answer = snake_optimization.run(calc_fitness_pure_twitching)
     print(answer)
