@@ -329,10 +329,10 @@ Sixth: percentage of crawling in % so DIVIDE by 100 to get the correct percentag
 """
 def run():
     sigma = 30
-    pop_size = 1000 #at least 30
-    initial_mean = np.array([250, 250, 250, 250, 50])
+    pop_size = 500 #at least 30
+    initial_mean = np.array([-66.08819673,367.36506461,493.36972054,488.02881696,78.20414871,24.81136202])
     snake_optimization = CMAES(initial_mean=initial_mean, sigma=sigma, popsize=pop_size, generations=250, reverse=True)
-    answer = snake_optimization.run(calc_fitness_pure_twitching)
+    answer = snake_optimization.run(calc_fitness_combined)
     print(answer)
     plt.plot(snake_optimization.stats_maxfitness)
     print(snake_optimization.stopping)
