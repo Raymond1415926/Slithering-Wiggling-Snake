@@ -290,21 +290,22 @@ def calc_fitness_pure_twitching(b_coeff_and_lambda):
             fitness -= abs(lambda_m) * penalty * 30
     return fitness
 
-def calc_fitness_combined(b_coeff_and_lambda_percentage):
-    b_coeff_and_lambda_percentage = np.array(b_coeff_and_lambda_percentage)
-    if (len(b_coeff_and_lambda_percentage) == 6):
-        b_coeff_and_lambda_percentage = b_coeff_and_lambda_percentage.flatten()
+def calc_fitness_combined(b_coeff_and_lambda_percentage_period):
+    b_coeff_and_lambda_percentage = np.array(b_coeff_and_lambda_percentage_period)
+    if (len(b_coeff_and_lambda_percentage_period) == 7):
+        b_coeff_and_lambda_percentage_period = b_coeff_and_lambda_percentage_period.flatten()
     else:
         assert False, "Wrong number of input parameters"
     b_coeff = b_coeff_and_lambda_percentage[0:4]
     lambda_m = b_coeff_and_lambda_percentage[4] / 100
-    crawling_percentage = b_coeff_and_lambda_percentage[-1] / 100
+    crawling_percentage = b_coeff_and_lambda_percentage[5] / 100
     b_coeffs = np.zeros(6)
     b_coeffs[1:5] = b_coeff
+    period = b_coeff_and_lambda_percentage_period[6] / 1000
 
     original_stdout = sys.stdout
     sys.stdout = open(os.devnull,"w")
-    distance_traveled = run_snake(no_fwd_fric=True,b_coeff=b_coeffs,wave_length=lambda_m,percent_crawling=crawling_percentage, n_elements=20,run_time=1)
+    distance_traveled = run_snake(period=period,no_fwd_fric=True,b_coeff=b_coeffs,wave_length=lambda_m,percent_crawling=crawling_percentage, n_elements=50,run_time=1)
     sys.stdout = original_stdout
 
     boundary = 500
@@ -316,8 +317,8 @@ def calc_fitness_combined(b_coeff_and_lambda_percentage):
     if np.any(out_of_bound):
         for idx in np.where(abs_coeff > boundary)[0]:
             fitness -= abs_coeff[idx] * penalty
-    if lambda_m < 0:
-        fitness -= abs(lambda_m) * penalty * 30
+    if np.abs(period) <0.25: #you physically cannot twitch that fast
+        fitness -= 1000
     if crawling_percentage < 0 or crawling_percentage > 1:
         fitness -= abs(crawling_percentage) * penalty * 100
     return fitness
@@ -329,9 +330,9 @@ Fifth: wave length in centimeters, so DIVIDE by 100 to get the correct length in
 Sixth: percentage of crawling in % so DIVIDE by 100 to get the correct percentage in digital form.
 """
 def run():
-    sigma = 30
-    pop_size = 80
-    initial_mean = np.array([250, 250, 250, 250, 0, 50])
+    sigma = 50
+    pop_size = 100
+    initial_mean = np.array([0,0,0,0,0,1,1000])
     snake_optimization = CMAES(initial_mean=initial_mean, sigma=sigma, popsize=pop_size, generations=250, reverse=True)
     answer = snake_optimization.run(calc_fitness_combined)
     print(answer)

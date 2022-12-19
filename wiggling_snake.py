@@ -332,7 +332,7 @@ def run_snake_pure_twitching(
 
 def run_snake(
     b_coeff, wave_length, percent_crawling=0.5, run_time=1, n_elements=10,PLOT_FIGURE=False, SAVE_FIGURE=False, SAVE_VIDEO=False,\
-        xlim = (0,5), no_fwd_fric = False, period = 1
+        xlim = (0,5), ylim = (-1,1), no_fwd_fric = False, period = 1, dt = 1e-4
 ):
     # Initialize the simulation class
     snake_sim = SnakeSimulator()
@@ -398,9 +398,11 @@ def run_snake(
     kinetic_mu_array = np.array(
         [mu, 1.5*mu, 2*mu]
     )  # [forward, backward, sideways]
-    if no_fwd_fric: kinetic_mu_array[0] = 0
+    factor = 4
+    if no_fwd_fric: kinetic_mu_array[0] /= factor
     # static_mu_array = np.zeros(kinetic_mu_array.shape)
     static_mu_array = 2 * kinetic_mu_array
+    static_mu_array[0] *= factor
     snake_sim.add_forcing_to(shearable_rod).using(
         AnisotropicFrictionalPlane,
         k=1.0,
@@ -413,7 +415,7 @@ def run_snake(
     )
 
     damping_constant = 1.9
-    time_step = 1e-4
+    time_step = dt
     snake_sim.dampen(shearable_rod).using(
         AnalyticalLinearDamper,
         damping_constant=damping_constant,
@@ -480,7 +482,7 @@ def run_snake(
             video_name=filename_video,
             fps=rendering_fps,
             xlim=xlim,
-            ylim=(-3, 3),
+            ylim=ylim,
         )
 
 
