@@ -18,6 +18,8 @@ n_elements = 50
 # percent_crawling = 50 #in %
 # percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
 # wave_length /= 100 #obtain wave_length in meters
+no_friction = False
+period = 1
 
 # pure twitching
 # {'MaxIter': False, 'EqualFunVals': False, 'ConditionCov': False, 'NoEffectCoor': True, 'Stagnation': False, 'TolXUp': False}
@@ -28,6 +30,8 @@ n_elements = 50
 # percent_crawling = 0
 # percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
 # wave_length /= 100 #obtain wave_length in meters
+no_friction = False
+period = 1
 
 #combined case
 #{'MaxIter': False, 'EqualFunVals': False, 'ConditionCov': True, 'NoEffectCoor': False, 'Stagnation': False, 'TolXUp': False}
@@ -38,12 +42,14 @@ n_elements = 50
 # percent_crawling = b_coeff_and_lambda_percentage[-1] / 100
 # percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
 # wave_length /= 100 #obtain wave_length in meters
+no_friction = False
+period = 1
 
 
 #rattle snake
 #{'MaxIter': False, 'EqualFunVals': False, 'ConditionCov': True, 'NoEffectCoor': False, 'Stagnation': False, 'TolXUp': False}
-b_coeff_and_lambda_percentage_period = [-220.56803511, -385.25037578, -433.75420926, -426.88877202,  206.07765966,
-   93.68681072, 65.65190923]
+b_coeff_and_lambda_percentage_period = [-4.89530774e+02, -4.92543301e+02, -4.93365239e+02, -2.11807898e+02,
+  1.19699537e+02,  1.94942169e-01, 2.87774780e+02]
 b_coeff = [0,0,0,0,0,0] #in N
 b_coeff[1:5] = b_coeff_and_lambda_percentage_period[0:4]
 wave_length = b_coeff_and_lambda_percentage_period[4] #in cm
@@ -54,5 +60,5 @@ percent_crawling /= 100 #obtain input for run fuction in digital form instead of
 wave_length /= 100 #obtain wave_length in meters
 no_friction = True
 distance_traveled = run_snake(period = period, no_fwd_fric=no_friction,b_coeff=b_coeff,wave_length=wave_length,percent_crawling=percent_crawling,\
-                                  SAVE_VIDEO=True, xlim=(0,12), ylim=(-10,10), n_elements=20,run_time=5, dt = 1e-4)
+                                  SAVE_VIDEO=True, xlim=(0,6), ylim=(-1,1), n_elements=50,run_time=5, dt = 1e-4)
 
