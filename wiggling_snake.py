@@ -20,7 +20,7 @@ class SnakeSimulator(BaseSystemCollection, Constraints, Forcing, Damping, CallBa
 
 def run_snake_pure_wiggle(
     b_coeff, wave_length, run_time=1, n_elements=10,PLOT_FIGURE=False, SAVE_FIGURE=False, SAVE_VIDEO=False,\
-        xlim = (0,5)
+        xlim = (0,5), no_fwd_fric = False
 ):
     # Initialize the simulation class
     snake_sim = SnakeSimulator()
@@ -332,13 +332,13 @@ def run_snake_pure_twitching(
 
 def run_snake(
     b_coeff, wave_length, percent_crawling=0.5, run_time=1, n_elements=10,PLOT_FIGURE=False, SAVE_FIGURE=False, SAVE_VIDEO=False,\
-        xlim = (0,5)
+        xlim = (0,5), no_fwd_fric = False, period = 1
 ):
     # Initialize the simulation class
     snake_sim = SnakeSimulator()
 
     # Simulation parameters
-    period = 1
+    period = period
     final_time = run_time
 
     # setting up test params
@@ -398,6 +398,7 @@ def run_snake(
     kinetic_mu_array = np.array(
         [mu, 1.5*mu, 2*mu]
     )  # [forward, backward, sideways]
+    if no_fwd_fric: kinetic_mu_array[0] = 0
     # static_mu_array = np.zeros(kinetic_mu_array.shape)
     static_mu_array = 2 * kinetic_mu_array
     snake_sim.add_forcing_to(shearable_rod).using(

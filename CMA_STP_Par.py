@@ -245,7 +245,7 @@ def calc_fitness_pure_wiggle(b_coeff_and_lambda):
 
     original_stdout = sys.stdout
     sys.stdout = open(os.devnull,"w")
-    distance_traveled = run_snake(percent_crawling=1,b_coeff=b_coeffs,wave_length=lambda_m,n_elements=20,run_time=1)
+    distance_traveled = run_snake(no_fwd_fric = True, percent_crawling=1,b_coeff=b_coeffs,wave_length=lambda_m,n_elements=20,run_time=1)
     sys.stdout = original_stdout
 
     boundary = 500
@@ -293,7 +293,7 @@ def calc_fitness_pure_twitching(b_coeff_and_lambda):
 def calc_fitness_combined(b_coeff_and_lambda_percentage):
     b_coeff_and_lambda_percentage = np.array(b_coeff_and_lambda_percentage)
     if (len(b_coeff_and_lambda_percentage) == 6):
-        b_coeff_and_lambda = b_coeff_and_lambda_percentage.flatten()
+        b_coeff_and_lambda_percentage = b_coeff_and_lambda_percentage.flatten()
     else:
         assert False, "Wrong number of input parameters"
     b_coeff = b_coeff_and_lambda_percentage[0:4]
@@ -304,7 +304,7 @@ def calc_fitness_combined(b_coeff_and_lambda_percentage):
 
     original_stdout = sys.stdout
     sys.stdout = open(os.devnull,"w")
-    distance_traveled = run_snake(b_coeff=b_coeffs,wave_length=lambda_m,percent_crawling=crawling_percentage, n_elements=20,run_time=1)
+    distance_traveled = run_snake(no_fwd_fric=True,b_coeff=b_coeffs,wave_length=lambda_m,percent_crawling=crawling_percentage, n_elements=20,run_time=1)
     sys.stdout = original_stdout
 
     boundary = 500

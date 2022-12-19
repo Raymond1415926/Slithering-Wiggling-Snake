@@ -31,16 +31,7 @@ n_elements = 50
 
 #combined case
 #{'MaxIter': False, 'EqualFunVals': False, 'ConditionCov': True, 'NoEffectCoor': False, 'Stagnation': False, 'TolXUp': False}
-b_coeff_and_lambda_percentage = [1.17293510e+02,2.86312534e+02,4.30534094e+02,4.85093523e+02,1.49971895e+02,2.74094314e-01]
-b_coeff = [0,0,0,0,0,0] #in N
-b_coeff[1:5] = b_coeff_and_lambda_percentage[0:4]
-wave_length = b_coeff_and_lambda_percentage[4] #in cm
-percent_crawling = b_coeff_and_lambda_percentage[-1] / 100
-percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
-wave_length /= 100 #obtain wave_length in meters
-
-#test around
-# b_coeff_and_lambda_percentage = [174.72321114,254.19679463,411.91380427,292.05419199,141.12135051,3.87812994]
+# b_coeff_and_lambda_percentage = [1.17293510e+02,2.86312534e+02,4.30534094e+02,4.85093523e+02,1.49971895e+02,2.74094314e-01]
 # b_coeff = [0,0,0,0,0,0] #in N
 # b_coeff[1:5] = b_coeff_and_lambda_percentage[0:4]
 # wave_length = b_coeff_and_lambda_percentage[4] #in cm
@@ -48,6 +39,18 @@ wave_length /= 100 #obtain wave_length in meters
 # percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
 # wave_length /= 100 #obtain wave_length in meters
 
-distance_traveled = run_snake(b_coeff=b_coeff,wave_length=wave_length,percent_crawling=percent_crawling,\
-                                  SAVE_VIDEO=True, xlim=(0,5), n_elements=50,run_time=5)
+
+#rattle snake
+#{'MaxIter': False, 'EqualFunVals': False, 'ConditionCov': True, 'NoEffectCoor': False, 'Stagnation': False, 'TolXUp': False}
+b_coeff_and_lambda_percentage = [407.03150688, 462.80505041, 479.34946915, 482.74713473, 283.22191822,
+  99.27922089]
+b_coeff = [0,0,0,0,0,0] #in N
+b_coeff[1:5] = b_coeff_and_lambda_percentage[0:4]
+wave_length = b_coeff_and_lambda_percentage[4] #in cm
+percent_crawling = b_coeff_and_lambda_percentage[-1] #in %
+percent_crawling /= 100 #obtain input for run fuction in digital form instead of percentage
+wave_length /= 100 #obtain wave_length in meters
+no_friction = True
+distance_traveled = run_snake(period = 0.25, no_fwd_fric=no_friction,b_coeff=b_coeff,wave_length=wave_length,percent_crawling=percent_crawling,\
+                                  SAVE_VIDEO=True, xlim=(0,10), n_elements=20,run_time=5)
 
