@@ -203,7 +203,7 @@ class CMAES:
         last = int(10 + np.ceil(30*self.dim / self.popsize))
         if (last < len(self.stats_medianfitness) and np.isclose(np.max(self.stats_maxfitness[-last:]) - np.min(self.stats_maxfitness[-last:]), 0)):
             self.stopping["EqualFunVals"] = True
-        if (self.cond > 10**4):
+        if (self.cond > 10**14):
             self.stopping["ConditionCov"] = True
         if all(np.isclose(self.centroid, self.centroid + 0.2 * self.sigma * np.diag(self.C))):
             self.stopping["NoEffectCoor"] = True
@@ -290,7 +290,7 @@ def calc_fitness_pure_twitching(b_coeff_and_lambda):
             fitness -= abs(lambda_m) * penalty * 30
     return fitness
 
-def calc_fitness_combined(b_coeff_and_lambda_percentage_period):
+def calc_fitness_combined_period(b_coeff_and_lambda_percentage_period):
     b_coeff_and_lambda_percentage = np.array(b_coeff_and_lambda_percentage_period)
     if (len(b_coeff_and_lambda_percentage_period) == 7):
         b_coeff_and_lambda_percentage_period = b_coeff_and_lambda_percentage_period.flatten()
@@ -305,7 +305,7 @@ def calc_fitness_combined(b_coeff_and_lambda_percentage_period):
 
     original_stdout = sys.stdout
     sys.stdout = open(os.devnull,"w")
-    distance_traveled = run_snake(period=period,no_fwd_fric=True,b_coeff=b_coeffs,wave_length=lambda_m,percent_crawling=crawling_percentage, n_elements=50,run_time=1)
+    distance_traveled = run_snake(period=period,no_fwd_fric=True,b_coeff=b_coeffs,wave_length=lambda_m,percent_crawling=crawling_percentage, n_elements=20,run_time=1)
     sys.stdout = original_stdout
 
     boundary = 500
@@ -323,6 +323,36 @@ def calc_fitness_combined(b_coeff_and_lambda_percentage_period):
         fitness -= abs(crawling_percentage) * penalty * 100
     return fitness
 
+def calc_fitness_combined(b_coeff_and_lambda_percentage):
+    b_coeff_and_lambda_percentage = np.array(b_coeff_and_lambda_percentage)
+    if (len(b_coeff_and_lambda_percentage) == 6):
+        b_coeff_and_lambda_percentage_period = b_coeff_and_lambda_percentage.flatten()
+    else:
+        assert False, "Wrong number of input parameters"
+    b_coeff = b_coeff_and_lambda_percentage[0:4]
+    lambda_m = b_coeff_and_lambda_percentage[4] / 100
+    crawling_percentage = b_coeff_and_lambda_percentage[5] / 100
+    b_coeffs = np.zeros(6)
+    b_coeffs[1:5] = b_coeff
+
+    original_stdout = sys.stdout
+    sys.stdout = open(os.devnull,"w")
+    distance_traveled = run_snake(b_coeff=b_coeffs,wave_length=lambda_m,percent_crawling=crawling_percentage, n_elements=20,run_time=1)
+    sys.stdout = original_stdout
+
+    boundary = 500
+    b_coeff = np.array(b_coeff)
+    fitness = distance_traveled
+    abs_coeff = np.abs(b_coeff)
+    penalty = 100.0
+    out_of_bound = abs_coeff > boundary
+    if np.any(out_of_bound):
+        for idx in np.where(abs_coeff > boundary)[0]:
+            fitness -= abs_coeff[idx] * penalty
+    if crawling_percentage < 0 or crawling_percentage > 1:
+        fitness -= abs(crawling_percentage) * penalty * 100
+    return fitness
+
 """
 inputs for CMA: 
 First four term: the middle 4 for the 6 b_spline coefficients in Newtons
@@ -332,7 +362,7 @@ Sixth: percentage of crawling in % so DIVIDE by 100 to get the correct percentag
 def run():
     sigma = 50
     pop_size = 100
-    initial_mean = np.array([0,0,0,0,0,1,1000])
+    initial_mean = np.array([0,0,0,0,1,0.5])
     snake_optimization = CMAES(initial_mean=initial_mean, sigma=sigma, popsize=pop_size, generations=250, reverse=True)
     answer = snake_optimization.run(calc_fitness_combined)
     print(answer)

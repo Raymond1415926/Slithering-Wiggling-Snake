@@ -2,11 +2,11 @@ from wiggling_snake import*
 
 pure_wiggling = False
 pure_twitching = False
-combined_case = False
-rattle_snake = True
+combined_case = True
+rattle_snake = False
 
 
-n_elements = 50
+n_elements = 20
 runtime = 1
 dt = 1e-4
 
@@ -38,7 +38,8 @@ if pure_twitching:
 #combined case
 #{'MaxIter': False, 'EqualFunVals': False, 'ConditionCov': True, 'NoEffectCoor': False, 'Stagnation': False, 'TolXUp': False}
 if combined_case:
-    b_coeff_and_lambda_percentage = [1.17293510e+02,2.86312534e+02,4.30534094e+02,4.85093523e+02,1.49971895e+02,2.74094314e-01]
+    b_coeff_and_lambda_percentage = [-110.24215054,499.84344294,499.58985351,-499.71825569,195.1785399,
+   14.492417  ]
     b_coeff = [0,0,0,0,0,0] #in N
     b_coeff[1:5] = b_coeff_and_lambda_percentage[0:4]
     wave_length = b_coeff_and_lambda_percentage[4] #in cm
@@ -48,7 +49,15 @@ if combined_case:
     no_friction = False
     period = 1
 
-#rattle snake
+"""
+rattle snake
+assumptions: A rattle snake lifts its body when it is going forward
+Therefore, the forward kinetic friction must be significantly lower
+Also, A rattle snake must have optimized its muscle so that the period of muscular activities
+are perfect optimal for their crawling speed within reasonable range.
+Assume the forward kinetic friction is 1/4 of original
+Assume the muscle over the whole body contracts with a period at least 0.25s
+"""
 #{'MaxIter': False, 'EqualFunVals': False, 'ConditionCov': True, 'NoEffectCoor': False, 'Stagnation': False, 'TolXUp': False}
 if rattle_snake:
     b_coeff_and_lambda_percentage_period = np.array([-4.89530774e+02, -4.92543301e+02, -4.93365239e+02, -2.11807898e+02,
